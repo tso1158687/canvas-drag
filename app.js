@@ -1,15 +1,15 @@
 // 模擬一開始server下來的資料
 var serverData = [
   {
-    name: "a1",
+    name: "ajax資料1",
     points: [1737, 166, 1736, 258, 1660, 268, 1688, 150, 1735, 167]
   },
   {
-    name: "a2",
+    name: "ajax資料2",
     points: [1253, 134, 1164, 202, 1294, 232, 1256, 136]
   },
   {
-    name: "a3",
+    name: "ajax資料3",
     points: [
       559,
       263,
@@ -52,7 +52,8 @@ var layer = new Konva.Layer();
 
 serverData.forEach((e, i) => {
   var group = new Konva.Group({
-    draggable: true
+    draggable: true,
+    index:i
   });
   var SrvRect = new Konva.Line({
     points: e.points,
@@ -84,10 +85,18 @@ serverData.forEach((e, i) => {
   // layer.add(SrvRect);
   // layer.add(SrvRectText)
   stage.add(layer);
+  // 拖移事件
   group.on("dragend", function(e) {
+    // 紀錄位移脫放資料
+    serverData[e.target.attrs.index].drag={
+      x:e.evt.dragEndNode.attrs.x,
+      y:e.evt.dragEndNode.attrs.y
+    }
+    console.log(e)
     console.log(group)
     console.log(e.evt.dragEndNode.attrs.x);
     console.log(e.evt.dragEndNode.attrs.y);
+    console.log(serverData)
   });
 });
 
@@ -107,7 +116,8 @@ var rect = new Konva.Line({
   stroke: "black",
   strokeWidth: 5,
   closed: true,
-  draggable: true
+  draggable: true,
+  Opacity: 0.6
 });
 stage.on("contentClick", e => {
   clickPoints.push(e.evt.offsetX);
@@ -137,7 +147,6 @@ stage.on("contentClick", e => {
       layer.add(tempLine);
       stage.add(layer);
     }
-    // console.log("要算距離囉");
   }
 });
 
