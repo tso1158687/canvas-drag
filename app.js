@@ -1,74 +1,63 @@
 var width = window.innerWidth;
-var height = window.innerHeight - 25;
-// first we need Konva core things: stage and layer
+var height = window.innerHeight;
 var stage = new Konva.Stage({
   container: "container",
   width: width,
   height: height
 });
 var layer = new Konva.Layer();
-stage.add(layer);
-// then we are going to draw into special canvas element
-var canvas = document.createElement("canvas");
-canvas.width = stage.width() / 2;
-canvas.height = stage.height() / 2;
-// creted canvas we can add to layer as "Konva.Image" element
-var image = new Konva.Image({
-  image: canvas,
-  x: stage.width() / 4,
-  y: stage.height() / 4,
+var redLine = new Konva.Line({
+  points: [5, 70, 140, 23, 250, 60, 300, 20],
+  stroke: "red",
+  strokeWidth: 15,
+  lineCap: "round",
+  lineJoin: "round"
+});
+// dashed line
+var greenLine = new Konva.Line({
+  points: [5, 70, 140, 23, 250, 60, 300, 20],
   stroke: "green",
-  shadowBlur: 5
+  strokeWidth: 2,
+  lineJoin: "round",
+  /*
+       * line segments with a length of 33px
+       * with a gap of 10px
+       */
+  dash: [33, 10]
 });
-layer.add(image);
-stage.draw();
-// Good. Now we need to get access to context element
-var context = canvas.getContext("2d");
-context.strokeStyle = "#df4b26";
-context.lineJoin = "round";
-context.lineWidth = 5;
-var isPaint = false;
-var lastPointerPosition;
-var mode = "brush";
-// now we need to bind some events
-// we need to start drawing on mousedown
-// and stop drawing on mouseup
-stage.on("contentMousedown.proto", function() {
-  isPaint = true;
-  lastPointerPosition = stage.getPointerPosition();
+// complex dashed and dotted line
+var blueLine = new Konva.Line({
+  points: [5, 70, 140, 23, 250, 60, 300, 20],
+  stroke: "blue",
+  strokeWidth: 10,
+  lineCap: "round",
+  lineJoin: "round",
+  /*
+       * line segments with a length of 29px with a gap
+       * of 20px followed by a line segment of 0.001px (a dot)
+       * followed by a gap of 20px
+       */
+  dash: [29, 20, 0.001, 20]
 });
-stage.on("contentMouseup.proto", function() {
-  isPaint = false;
+/*
+     * since each line has the same point array, we can
+     * adjust the position of each one using the
+     * move() method
+     */
+redLine.move({
+  x: 0,
+  y: 5
 });
-// and core function - drawing
-stage.on("contentMousemove.proto", function() {
-  if (!isPaint) {
-    return;
-  }
-  if (mode === "brush") {
-    context.globalCompositeOperation = "source-over";
-  }
-  if (mode === "eraser") {
-    context.globalCompositeOperation = "destination-out";
-  }
-  context.beginPath();
-  var localPos = {
-    x: lastPointerPosition.x - image.x(),
-    y: lastPointerPosition.y - image.y()
-  };
-  context.moveTo(localPos.x, localPos.y);
-  var pos = stage.getPointerPosition();
-  localPos = {
-    x: pos.x - image.x(),
-    y: pos.y - image.y()
-  };
-  context.lineTo(localPos.x, localPos.y);
-  context.closePath();
-  context.stroke();
-  lastPointerPosition = pos;
-  layer.draw();
+greenLine.move({
+  x: 0,
+  y: 55
 });
-var select = document.getElementById("tool");
-select.addEventListener("change", function() {
-  mode = select.value;
+blueLine.move({
+  x: 0,
+  y: 105
 });
+layer.add(redLine);
+layer.add(greenLine);
+layer.add(blueLine);
+// add the layer to the stage
+stage.add(layer);
