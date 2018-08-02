@@ -53,35 +53,11 @@ var layer = new Konva.Layer();
 // ajax data start
 drawData();
 
-// ajax data end
-// dashed line
-// var tempLine = new Konva.Line({
-//   points: clickPoints,
-//   stroke: "red",
-//   strokeWidth: 2,
-//   lineJoin: "round",
-//   dash: [33, 10]
-// });
-// var rect = new Konva.Line({
-//   //   points: rectPonits[0],
-//   points: clickPoints,
-//   fill: "red",
-//   stroke: "black",
-//   strokeWidth: 5,
-//   closed: true,
-//   draggable: true,
-//   Opacity: 0.6
-// });
 stage.on("contentClick", e => {
-  console.log(clickPoints);
   clickPoints.push(e.evt.offsetX);
   clickPoints.push(e.evt.offsetY);
-  console.log(clickPoints);
-  //   console.log(clickPoints);
   if (clickPoints.length > 3 && clickPoints.length < 6) {
     drawTempLine();
-    // layer.add(tempLine);
-    // stage.add(layer);
     console.log("進來這裡吧?");
   } else if (clickPoints.length > 5) {
     let x0 = clickPoints[0];
@@ -92,42 +68,22 @@ stage.on("contentClick", e => {
     let length = Math.sqrt(x_square + y_square);
     // 距離小於25，點連成線，大於25繼續畫點
     if (length < 25) {
-      console.log("asd");
-      //   rectPonits.push(clickPoints);
-      //   console.log(rectPonits)
-      //   clickPoints=[]
-      console.log(clickPoints);
-      // layer.add(rect);
       serverData.push({
         name: "新建資料",
         points: clickPoints
       });
-      console.log(serverData);
-      //   layer.add(tempLine)
-      // stage.add(layer);
-
       drawData();
       clickPoints = [];
     } else {
       drawTempLine()
-      console.log("再來進來這裡吧?");
-      // layer.add(tempLine);
-      // stage.add(layer);
+    
     }
   }
 });
 function drawData() {
-  // var huabu=document.getElementsByTagName("canvas")
-  // console.log('---')
-  // console.log(huabu)
-  // console.log('---')
-  // huabu.getContext('2d').clearRect(0,0,width,height)
+  // 清掉所有東西重來 
   layer.destroy();
 
-  // stage.clearRect(0, 0, width, height);
-  // layer.clear()
-  // stage.clear()
-  console.log("drawwww");
   serverData.forEach((e, i) => {
     // 圖形基本設定start
     var group = new Konva.Group({
@@ -161,8 +117,6 @@ function drawData() {
     group.on("mouseout", function() {
       document.body.style.cursor = "default";
     });
-    // layer.add(SrvRect);
-    // layer.add(SrvRectText)
     stage.add(layer);
     // 拖移事件
     group.on("dragend", function(e) {
@@ -172,8 +126,6 @@ function drawData() {
         y: e.evt.dragEndNode.attrs.y
       };
       console.log("drag");
-      // console.log(e)
-      // console.log(serverData)
     });
   });
 }
